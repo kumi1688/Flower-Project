@@ -15,7 +15,7 @@ for(let i = 1; i <= total_rasp_num; i++){
 }
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const sensorRouter = require('./routes/sensor')
 const mqttRouter = require('./routes/mqtt');
 
 var app = express();
@@ -31,7 +31,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/sensor', sensorRouter);
 app.use('/mqtt/:id', (req, res)=>{
   const id = req.params.id;
   if(mqtt_thread_status[id] === true){
@@ -64,4 +64,20 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+app.io = require('socket.io')();
+app.io.on('connection', function(socket) {
+  console.log("a user connected");
+  setInterval(() => {
+    socket.emit('hi', {message: 'hello websocket!'})
+  }, 1000);
+
+
+  socket.on('disconnect', function () {
+    console.log('user disconnected');
+  });
+
+  socket.on('news', function (msg) {
+
+  });
+});
 module.exports = app;

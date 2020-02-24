@@ -1,7 +1,7 @@
 var server = require('../bin/www');
 var io = require('socket.io')(server);
 
-server.listen(80);
+console.log('hellooooooo');
 
 io.on('connection', function (socket) {
     console.log('websocket connected');
