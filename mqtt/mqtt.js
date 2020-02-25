@@ -3,13 +3,12 @@ const client = mqtt.connect("mqtt://test.mosquitto.org");
 const Sensor = require('../db/sensorSchema');
 const SensorMeta = require('../db/sensorMetaSchema');
 const db = require('../db/db');
-const { Worker, isMainThread, workerData } = require('worker_threads');
+const {workerData, isMainThread} = require('worker_threads');
 
 let deviceList = [];
 const getDeviceList = () => new Promise(async (resolve, reject)=>{
     try{
         const result = await SensorMeta.findOne();
-
         deviceList = result._doc.deviceList;
         resolve(deviceList);
     }catch(e) {
@@ -23,8 +22,8 @@ const setDeviceList = async () => {
 setDeviceList();
 
 client.on("connect", function() {
-    console.log(`connected to RASP${workerData}`);
-    client.subscribe(`RASP${workerData}`);
+        console.log(`connected to RASP${workerData}`);
+        client.subscribe(`RASP${workerData}`);
 });
 
 client.on("message",   async function(topic, message) {
@@ -63,3 +62,5 @@ client.on("message",   async function(topic, message) {
          if(err) throw err;
      })
 });
+
+module.exports = client;

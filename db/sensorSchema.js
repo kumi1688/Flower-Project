@@ -13,16 +13,16 @@ const SensorSchema = new Schema({
 });
 
 SensorSchema.statics.getTotalDeviceNum = async function getTotalDeviceNum(){
-     return SensorMeta.findOne({});
+     return await SensorMeta.findOne({});
 };
 
 SensorSchema.statics.getSortedByDevice =  async function getSortedByDevice(){
     const result = await this.getTotalDeviceNum();
     const totalDeviceNumber = result._doc.totalDeviceNumber;
-    console.log(totalDeviceNumber);
+    // console.log(totalDeviceNumber);
     let deviceDataList = [];
     for(let i = 0; i < totalDeviceNumber; i++){
-        deviceDataList[i] = await this.find({device: `RASP${i+1}`}).limit(5);
+        deviceDataList[i] = await this.find({device: `RASP${i+1}`}).sort({date: -1}).limit(10);
     }
     return {deviceDataList: deviceDataList, totalDeviceNumber: totalDeviceNumber};
 };

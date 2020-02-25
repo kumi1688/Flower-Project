@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Flower = require('../db/sensorSchema');
 
 mongoose.connect('mongodb://localhost/flower',  { useNewUrlParser: true });
 

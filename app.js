@@ -4,8 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const { Worker } = require('worker_threads');
+const db = require('./db/db');
+const Sensor = require('./db/sensorSchema');
 
-const total_rasp_num = 3;
+let total_rasp_num = 6;
 let mqtt_thread = [];
 let mqtt_thread_status = [];
 
@@ -64,20 +66,26 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+let count = 0;
+
+
 app.io = require('socket.io')();
-app.io.on('connection', function(socket) {
-  console.log("a user connected");
-  setInterval(() => {
-    socket.emit('hi', {message: 'hello websocket!'})
+app.io.on('connection', async function(socket) {
+    console.log("a user connected");
+  setInterval(async () => {
+    const result = await getRealTimeData();
+    // console.log(result);
+    socket.emit('realTimeData', {message: `websocket ${count++}!`, data: result});
   }, 1000);
-
-
-  socket.on('disconnect', function () {
-    console.log('user disconnected');
+    socket.on('disconnect', function () {
+      console.log('user disconnected');
+    });
   });
 
-  socket.on('news', function (msg) {
 
-  });
-});
+const getRealTimeData = async () => {
+    return await Sensor.getSortedByDevice();
+};
+
 module.exports = app;
+

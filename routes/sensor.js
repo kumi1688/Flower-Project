@@ -18,7 +18,6 @@ router.get('/', (req, res, next)=>{
    Sensor.getSortedByDevice().then(result=>{
       res.send(result);
    })
-
 });
 
 
